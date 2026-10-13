@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qui me suit ?</title>
+  <meta name="description" content="Visite de vrais sites dans un navigateur simulé et regarde les cookies et les traqueurs se connecter à toi, comme avec Lightbeam.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍪</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="entete">
+    <div class="entete-titre">
+      <span class="logo" aria-hidden="true">🍪</span>
+      <div>
+        <h1>Qui me suit sur le web ?</h1>
+        <p class="sous-titre">Navigue et regarde les traqueurs se connecter à toi</p>
+      </div>
+    </div>
+    <div class="score" id="boite-score" title="Tes points d'enquêteur">
+      <span class="score-valeur" id="score">0</span>
+      <span class="score-label">points</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. NAVIGATEUR + BOCAL -->
+    <section class="carte-etape" aria-labelledby="titre-navigation">
+      <div class="etape-numero">1</div>
+      <div class="etape-contenu">
+        <h2 id="titre-navigation">Navigue comme d'habitude</h2>
+        <p class="explication">
+          Clique sur un site dans tes favoris. Chaque site visité dépose des <strong>cookies</strong>
+          (petits fichiers gardés par ton navigateur) et contacte d'autres sites en cachette : les <strong>sites tiers</strong>.
+        </p>
+        <div class="zone-navigation">
+          <div class="navigateur">
+            <div class="barre-onglets"><span class="onglet" id="onglet">Nouvel onglet</span></div>
+            <div class="barre-adresse">
+              <span class="adresse"><span aria-hidden="true">🔒</span> <span id="adresse">Choisis un site dans tes favoris</span></span>
+              <button type="button" class="bouton-effacer" id="effacer" title="Comme « Effacer les données de navigation » dans Chrome">🧹 Effacer mes cookies</button>
+            </div>
+            <div class="favoris" id="favoris" aria-label="Favoris"></div>
+            <div class="ecran" id="ecran" aria-live="polite"></div>
+          </div>
+          <aside class="bocal" aria-label="Ton bocal à cookies">
+            <div class="bocal-titre">🫙 Ton bocal à cookies</div>
+            <div class="bocal-nombre" id="bocal-cookies">0</div>
+            <div class="bocal-label">cookies</div>
+            <dl class="bocal-details">
+              <div><dt>dont cookies de sites tiers</dt><dd id="bocal-tiers">0</dd></div>
+              <div><dt>sites tiers contactés</dt><dd id="bocal-sites-tiers">0</dd></div>
+              <div><dt>sites visités</dt><dd id="bocal-visites">0</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TOILE -->
+    <section class="carte-etape" aria-labelledby="titre-toile">
+      <div class="etape-numero">2</div>
+      <div class="etape-contenu">
+        <h2 id="titre-toile">La toile des traqueurs</h2>
+        <p class="explication">
+          Les gros ronds sont les sites que tu as visités. Les petits ronds sont les sites tiers qu'ils ont contactés.
+          Un traqueur relié à plusieurs sites <strong>sait que c'est toi</strong> qui passes de l'un à l'autre.
+          Clique sur un rond pour enquêter.
+        </p>
+        <div class="legende" id="legende"></div>
+        <div class="toile-cadre">
+          <svg id="toile" role="img" aria-label="Graphe des sites visités et des sites tiers qu'ils contactent"></svg>
+          <div class="zoom-boutons">
+            <button type="button" id="zoom-plus" title="Zoomer" aria-label="Zoomer">+</button>
+            <button type="button" id="zoom-moins" title="Dézoomer" aria-label="Dézoomer">−</button>
+            <button type="button" id="zoom-recentrer" title="Revenir à la vue d'ensemble" aria-label="Revenir à la vue d'ensemble">⟲</button>
+          </div>
+          <p class="toile-vide" id="toile-vide">La toile est vide : visite un premier site.</p>
+        </div>
+        <p class="indice-zoom">🔍 Zoome avec <strong>+</strong> / <strong>−</strong>, <kbd>Ctrl</kbd> + molette ou en pinçant le pavé tactile ; fais glisser la carte pour te déplacer. Clique dans le vide pour tout réafficher.</p>
+        <label class="filtre"><input type="checkbox" id="filtre-partages"> Ne montrer que les sites tiers présents sur au moins 2 sites visités</label>
+        <div class="detail" id="detail" hidden></div>
+      </div>
+    </section>
+
+    <!-- 3. STATISTIQUES -->
+    <section class="carte-etape" aria-labelledby="titre-stats">
+      <div class="etape-numero">3</div>
+      <div class="etape-contenu">
+        <h2 id="titre-stats">Mes statistiques</h2>
+
+        <h3>⏳ Combien de temps restent tes cookies ?</h3>
+        <div class="histogramme" id="histogramme"></div>
+        <p class="record" id="record"></p>
+
+        <h3>🏢 Qui te suit ?</h3>
+        <div id="question-entreprise"></div>
+        <div class="barres" id="entreprises" hidden></div>
+
+        <h3>📋 Les sites visités</h3>
+        <div class="tableau-defilant">
+          <table class="tableau">
+            <thead><tr><th>Site</th><th>Ton choix</th><th>Cookies déposés</th><th>Sites tiers</th><th></th></tr></thead>
+            <tbody id="tableau-sites"><tr class="vide"><td colspan="5">Aucun site visité.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="liste-cookies" id="liste-cookies" hidden></div>
+      </div>
+    </section>
+
+    <!-- 4. ENQUÊTE -->
+    <section class="carte-etape carnet" aria-labelledby="titre-defis">
+      <div class="etape-numero">🎯</div>
+      <div class="etape-contenu">
+        <h2 id="titre-defis">Enquête</h2>
+        <ul class="defis" id="defis"></ul>
+        <div id="comparaisons"></div>
+        <button type="button" class="bouton-lien" id="recommencer">Tout recommencer (points et défis)</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pied">
+    <p>🔒 Simulation : aucun vrai site n'est contacté, rien n'est enregistré sur toi (ta progression reste dans ce navigateur).</p>
+    <p class="sources">
+      Données relevées le <span id="date-releve"></span> depuis Hong Kong sur les vrais sites, avec Google Chrome (profil vierge).
+      Sur ton navigateur, les chiffres peuvent être différents. Classement des traqueurs :
+      <a href="https://disconnect.me" target="_blank" rel="noopener">liste Disconnect</a> (CC BY-NC-SA 4.0).
+    </p>
+  </footer>
+
+  <script src="data/sites.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

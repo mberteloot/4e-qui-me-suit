@@ -1,0 +1,10 @@
+{
+  "name": "qui-me-suit-outils",
+  "private": true,
+  "description": "Relevé des cookies et traqueurs de vrais sites (Chrome) + tests jsdom",
+  "devDependencies": {
+    "jsdom": "^25.0.1",
+    "puppeteer-core": "^23.11.1",
+    "tldts": "^6.1.86"
+  }
+}
